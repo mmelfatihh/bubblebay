@@ -51,7 +51,7 @@ export const LobbyPage = () => {
   };
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-[100dvh]">
       {/* Loading Overlay */}
       {loading && (
           <div className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center text-cyan-400 animate-pulse tracking-widest">

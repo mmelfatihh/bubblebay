@@ -1,0 +1,16 @@
+{
+  "name": "BubbleBay Spatial Audio",
+  "short_name": "BubbleBay",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#06b6d4",
+  "description": "Spatial Audio Workspace for the Metaverse",
+  "icons": [
+    {
+      "src": "/icon (2).png",
+      "sizes": "1600x1600",
+      "type": "image/png"
+    }
+  ]
+}

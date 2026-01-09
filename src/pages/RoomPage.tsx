@@ -25,7 +25,7 @@ export const RoomPage = () => {
   if (!token) return null;
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-[100dvh]">
         <LiveAudioRoom 
             token={token} 
             serverUrl={SERVER_URL} 

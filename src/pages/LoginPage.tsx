@@ -27,7 +27,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-[100dvh]">
       <AuthForm onLogin={handleLogin} />
     </div>
   );
