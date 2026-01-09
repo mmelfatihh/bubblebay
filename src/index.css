@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The Magic Goo Filter - Makes bubbles merge like liquid */
+.gooey-container {
+  filter: url('#goo');
+}
+
+/* Hide the SVG filter definition visually */
+.goo-filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+body {
+  background-color: #0f172a; /* Dark blue background */
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
+}
