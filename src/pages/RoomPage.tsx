@@ -8,38 +8,27 @@ export const RoomPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Grab token passed from Lobby
-  const [token, setToken] = useState(location.state?.token || "");
+  const [token] = useState(location.state?.token || "");
 
   useEffect(() => {
-    // If someone copy-pasted the URL directly (no token in state), 
-    // we should technically redirect them to a "Join" page to generate one.
-    // For now, let's just bounce them to Lobby.
-    if (!token) {
-        console.log("No token found, redirecting to lobby...");
-        navigate('/lobby');
-    }
+    if (!token) { navigate('/lobby'); }
   }, [token, navigate]);
 
   if (!token) return null;
 
   return (
-    <div className="relative w-full h-[100dvh]">
+    <div className="relative w-full h-screen overflow-hidden">
         <LiveAudioRoom 
             token={token} 
             serverUrl={SERVER_URL} 
-            onHangUp={() => {
-                navigate('/lobby');
-                 
-            }} 
+            onHangUp={() => navigate('/lobby')} // Removed the reload here!
         />
         
-        {/* ROOM ID DISPLAY (So they can share it!) */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full text-white/50 text-xs tracking-widest flex gap-2">
-                <span>ROOM CODE:</span>
-                <span className="text-cyan-400 select-all pointer-events-auto cursor-pointer">{roomId}</span>
+        {/* ROOM ID: Added mt-safe to prevent notch cut-off */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none mt-[env(safe-area-inset-top)]">
+            <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full text-white/70 text-[10px] tracking-widest flex gap-2 shadow-2xl">
+                <span>ROOM:</span>
+                <span className="text-cyan-400 select-all pointer-events-auto cursor-pointer font-bold">{roomId}</span>
             </div>
         </div>
     </div>
