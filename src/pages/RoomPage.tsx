@@ -31,7 +31,7 @@ export const RoomPage = () => {
             serverUrl={SERVER_URL} 
             onHangUp={() => {
                 navigate('/lobby');
-                window.location.reload(); 
+                 
             }} 
         />
         
