@@ -29,7 +29,7 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
           opacity: 1,
           y: [0, -10, 0],
           transition: { 
-              y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+              y: { duration: 4, repeat: Infinity, ease: "easeInOut as any" },
               // The spring entry
               scale: { type: "spring", stiffness: 100, damping: 15, delay: 0.3 }, 
               left: { type: "spring", stiffness: 80, damping: 18, delay: 0.1 }

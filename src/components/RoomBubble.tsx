@@ -10,6 +10,7 @@ interface RoomBubbleProps {
   y: number;
   isMe: boolean;
   participant?: Participant; // <--- NEW PROP
+  volume: number;
   isMuted: boolean;
   onMuteToggle?: () => void;
   onDragStart?: () => void;
