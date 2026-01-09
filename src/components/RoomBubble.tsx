@@ -1,88 +1,48 @@
 import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
-import { Participant } from "livekit-client";
-import { useLiveKitVolume } from "../hooks/useLiveKitVolume";
 
 interface RoomBubbleProps {
   id: string;
   label: string;
   x: number;
   y: number;
-  isMe: boolean;
-  participant?: Participant; // <--- NEW PROP
-  volume: number;
+  volume: number; 
   isMuted: boolean;
+  isMe: boolean;
+  participant?: any; // Added to match Room.tsx
   onMuteToggle?: () => void;
   onDragStart?: () => void;
   onDragEnd?: (x: number, y: number, vx: number, vy: number) => void;
+  onDrag?: (x: number, y: number) => void;
 }
 
 export const RoomBubble = ({ 
-  label, x, y, isMe, participant, isMuted, 
-  onMuteToggle, onDragStart, onDragEnd 
+  label, x, y, volume, isMuted, isMe, 
+  onMuteToggle, onDragStart, onDragEnd, onDrag 
 }: RoomBubbleProps) => {
-  
-  const [isDragging, setIsDragging] = useState(false);
-  
-  // USE THE NEW HOOK: Calculate volume automatically based on the participant
-  const liveVolume = useLiveKitVolume(participant);
-  
-  // Amplify volume slightly for visual impact (max 1.0)
-  const displayVolume = Math.min(liveVolume * 1.5, 1);
-
-  const constraintsRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
-
-  useEffect(() => {
-      setDimensions({ 
-          w: window.innerWidth - 130, 
-          h: window.innerHeight - 130 
-      });
-  }, []);
 
   return (
     <>
-      <div className="absolute inset-0 pointer-events-none" ref={constraintsRef} />
-      
       <motion.div
-        className="absolute flex items-center justify-center rounded-full z-20 cursor-grab active:cursor-grabbing"
+        className="absolute flex items-center justify-center rounded-full z-20 cursor-grab active:cursor-grabbing touch-none"
         style={{ width: 130, height: 130 }}
-        
         drag
-        dragMomentum={false} 
-        dragConstraints={{ left: 0, right: dimensions.w, top: 0, bottom: dimensions.h }}
-        dragElastic={0.2} 
-        
-        onDragStart={() => {
-            setIsDragging(true);
-            if (onDragStart) onDragStart();
+        dragMomentum={false}
+        dragElastic={0.1}
+        onDragStart={onDragStart}
+        onDragEnd={() => onDragEnd?.(x, y, 0, 0)}
+        onDrag={(_, info) => {
+            if (onDrag) onDrag(info.point.x, info.point.y);
         }}
-        
-        onDragEnd={(_, info) => {
-            setIsDragging(false);
-            if (onDragEnd) {
-                onDragEnd(
-                    info.point.x - 65, 
-                    info.point.y - 65,
-                    info.velocity.x * 0.01,
-                    info.velocity.y * 0.01
-                );
-            }
-        }}
-
         animate={{ 
             x: x, 
             y: y,
-            // USE REAL VOLUME HERE
-            scale: isDragging ? 1.1 : (1 + displayVolume * 0.5), // Scale up to 1.5x
-            zIndex: isDragging ? 50 : 20,
+            scale: 1 + Math.min(volume, 0.2), 
             filter: isMuted ? "grayscale(100%) opacity(0.6)" : "grayscale(0%) opacity(1)"
         }} 
-        
         transition={{ 
             x: { type: "tween", duration: 0 }, 
             y: { type: "tween", duration: 0 },
-            scale: { type: "spring", stiffness: 300, damping: 20 }
+            scale: { type: "spring", stiffness: 200, damping: 25 }
         }}
       >
         <div className="w-full h-full rounded-full relative"
@@ -113,12 +73,8 @@ export const RoomBubble = ({
           <motion.button
             onClick={onMuteToggle}
             className="absolute z-30 w-12 h-12 rounded-full flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
-            animate={{ 
-                x: x + 85, 
-                y: y + 85,
-                opacity: isDragging ? 0 : 1 
-            }}
-            transition={{ duration: 0.2 }}
+            animate={{ x: x + 85, y: y + 85 }}
+            transition={{ type: "tween", duration: 0 }}
           >
              <div className={`w-full h-full rounded-full border border-white/20 backdrop-blur-md flex items-center justify-center shadow-lg transition-colors duration-300
                 ${isMuted ? "bg-red-500/80" : "bg-white/10"}`}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-export const useMicVolume = (enabled: boolean) => {
-  const [volume, setVolume] = useState(0);
+export const useMicVolume = (enabled: boolean): number => {
+  const [volume, setVolume] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
@@ -24,7 +24,7 @@ export const useMicVolume = (enabled: boolean) => {
 
         const analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.8; // Smoothing factor (0.0 - 1.0)
+        analyser.smoothingTimeConstant = 0.8;
         analyserRef.current = analyser;
 
         const source = audioContext.createMediaStreamSource(stream);
@@ -35,36 +35,25 @@ export const useMicVolume = (enabled: boolean) => {
 
         const updateVolume = () => {
           analyser.getByteFrequencyData(dataArray);
-          
-          // Calculate average volume
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
+          for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; }
           const average = sum / dataArray.length;
-          
-          // Normalize to 0.0 - 1.0 range (Typical max byte value is 255)
-          // We amplify it a bit (multiply by 2) to make it more reactive
           const norm = Math.min((average / 255) * 2.5, 1);
 
           setVolume(prev => {
-              // Smooth decay: Rise fast, fall slow
-              if (norm > prev) return prev + (norm - prev) * 0.5; // Attack
-              return prev + (norm - prev) * 0.1; // Decay
+              if (norm > prev) return prev + (norm - prev) * 0.5;
+              return prev + (norm - prev) * 0.1;
           });
 
           animationFrameRef.current = requestAnimationFrame(updateVolume);
         };
-
         updateVolume();
-
       } catch (err) {
         console.error("Microphone access denied:", err);
       }
     };
 
     startMic();
-
     return cleanup;
   }, [enabled]);
 

@@ -16,9 +16,8 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
       setTimeout(() => onPortalChoose(type), 600); 
   };
 
-  // Common variants for both portals
-  const portalVariants = {
-      // THE BIG BANG ENTRY: Start at center, scale 0 -> Spring outwards
+  // Fixed the 'any' typing here so Vercel doesn't complain about Easing types
+  const portalVariants: any = {
       hidden: { 
           left: "50%", 
           scale: 0, 
@@ -29,33 +28,29 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
           opacity: 1,
           y: [0, -10, 0],
           transition: { 
-              y: { duration: 4, repeat: Infinity, ease: "easeInOut as any" },
-              // The spring entry
+              y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
               scale: { type: "spring", stiffness: 100, damping: 15, delay: 0.3 }, 
               left: { type: "spring", stiffness: 80, damping: 18, delay: 0.1 }
           }
       },
-      // THE POP EXIT
       popping: { 
           scale: [1, 0.9, 20], 
           opacity: [1, 1, 0],
           transition: { duration: 0.6, times: [0, 0.3, 1], ease: "circIn" }
       },
-      // FADE AWAY
       faded: { scale: 0, opacity: 0, transition: { duration: 0.3 } }
   };
 
   return (
     <>
-      {/* --- LEFT PORTAL: CREATE --- */}
       <motion.div 
         className="absolute top-1/2 z-10 pointer-events-none"
         initial="hidden"
         animate={poppingState === 'create' ? 'popping' : (poppingState === 'join' ? 'faded' : 'idle')}
-        style={{ left: "30%" }} // Final position defined here, but overridden by 'hidden' variant initially
+        style={{ left: "30%" }}
         variants={{
             ...portalVariants,
-            idle: { ...portalVariants.idle, left: "30%" } // Define target Left
+            idle: { ...portalVariants.idle, left: "30%" }
         }}
       >
          <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center relative w-[180px] h-[180px] rounded-full"
@@ -72,7 +67,6 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
          </div>
       </motion.div>
 
-      {/* --- RIGHT PORTAL: JOIN --- */}
       <motion.div 
         className="absolute top-1/2 z-10 pointer-events-none"
         initial="hidden"
@@ -80,7 +74,7 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
         style={{ left: "70%" }}
         variants={{
             ...portalVariants,
-            idle: { ...portalVariants.idle, left: "70%" } // Define target Left
+            idle: { ...portalVariants.idle, left: "70%" }
         }}
       >
          <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center relative w-[180px] h-[180px] rounded-full"
@@ -97,15 +91,13 @@ export const Lobby = ({ onPortalChoose }: LobbyProps) => {
          </div>
       </motion.div>
 
-      {/* --- USER BUBBLE (Delayed Entry) --- */}
       {!poppingState && (
         <motion.div
-            initial={{ y: height + 200 }} // Start below screen
+            initial={{ y: height + 200 }}
             animate={{ y: 0 }}
-            transition={{ type: "spring", damping: 20, delay: 0.8 }} // Wait for portals to settle
-            className="absolute inset-0 z-20 pointer-events-none" // Wrapper to not mess up absolute bubble pos
+            transition={{ type: "spring", damping: 20, delay: 0.8 }}
+            className="absolute inset-0 z-20 pointer-events-none"
         >
-            {/* We need to re-enable pointer events on the bubble itself */}
             <div className="pointer-events-auto w-full h-full">
                 <Bubble 
                     label="ME"

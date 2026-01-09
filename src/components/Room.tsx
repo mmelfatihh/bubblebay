@@ -11,7 +11,7 @@ interface RoomProps {
 export const Room = ({ users, onHangUp }: RoomProps) => {
   const physicsState = useRef<{ [key: string]: { x: number, y: number, vx: number, vy: number } }>({});
   const draggingId = useRef<string | null>(null);
-  const [ setRenderTrigger] = useState(0);
+  const [renderTrigger, setRenderTrigger] = useState(0);
   const [muted, setMuted] = useState(false);
 
   const micVolume = useMicVolume(!muted);
